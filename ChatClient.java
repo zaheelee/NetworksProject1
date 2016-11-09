@@ -7,10 +7,19 @@ class ChatClient
 	{
 		//Put any necessary variables here
 		boolean connectedToServer = false;
+		String hostname = "";
+		int portNum = 0;
 		
-		
-		//TODO create input stream from the keyboard
+		//create input stream from the keyboard
 		BufferedReader inFromKeyboard = new BufferedReader(new InputStreamReader(System.in));
+		
+		//TODO prompt for the host name of server 
+		
+		//TODO save host name
+		
+		//TODO prompt for the port number of the server 
+		
+		//TODO save port number
 		
 		//TODO create client socket and connect to server and port 5001
 		

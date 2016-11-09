@@ -1,34 +1,48 @@
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-class ChatServer 
+class ChatServer /*implements Runnable*/
 {
+	/*
+	public void run()
+	{
+		
+	}
+	*/
+	
 	public static void main(String argv[]) throws Exception
 	{
 		//Put any shared variables you may need up here 
-		ArrayList<ChatUser> allUsers = new ArrayList<ChatUser>();
+		HashMap<String, ChatUser> allUsers = new HashMap<String, ChatUser>();
 		
 		//create the welcome socket
 		//this is what new clients connect to before making the connectionSocket
 		ServerSocket welcomeSocket = new ServerSocket(5001);
 		
-		/*TODO: design implementation with threads! Make sure to 
-		allow multiple connectionSockets to exist at once!*/
 		
 		//each loop represents one lifecycle of a client connection
 		while(true) //because you want the server always running
 		{
-			//TODO create connectionSocket from an accepted welcomeSocket
+			// create connectionSocket from an accepted welcomeSocket
+			Socket connectionSocket = welcomeSocket.accept();
 			
-			//TODO create input stream from connectionSocket
+			//create input stream from connectionSocket
+			BufferedReader inputStream = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 			
-			//TODO create output stream to connectionSocket (this user)
+			//create output stream to connectionSocket (this user)
+			DataOutputStream outputStream = new DataOutputStream(connectionSocket.getOutputStream());
 			
-			//TODO take in the username from that connectionSocket
+			String username = null;
+			while(username == null)
+			{
+				username = retrieveUsername(inputStream, outputStream, allUsers);
+			}
+			ChatUser user = new ChatUser(username, connectionSocket, inputStream, outputStream);
+			allUsers.put(user.getUsername(), user);
 			
-			//TODO check if that username is already in use
-				//TODO if in use, deny connection, if not vice versa
+			//TODO handle thread things HERE
 			
 			//this allows for one client to connect to multiple conversations
 			//the first chunk of this while loop will have code to connect 2 users
@@ -54,5 +68,21 @@ class ChatServer
 		}
 		//END OF LOOP, WAIT FOR ANOTHER CLIENT CONNECTION
 		
+	}
+	
+	public static String retrieveUsername(BufferedReader inputStream, DataOutputStream outputStream, HashMap<String, ChatUser> allUsers) throws IOException
+	{
+		outputStream.writeBytes("What is your username?");
+		String username = inputStream.readLine();
+		
+		if(allUsers.containsKey(username))
+		{
+			outputStream.writeBytes("This username is already in use");
+			return null;
+		}
+		else
+		{
+			return username;
+		}
 	}
 }
