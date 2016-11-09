@@ -1,11 +1,13 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 class ChatServer 
 {
 	public static void main(String argv[]) throws Exception
 	{
 		//Put any shared variables you may need up here 
+		ArrayList<ChatUser> allUsers = new ArrayList<ChatUser>();
 		
 		//create the welcome socket
 		//this is what new clients connect to before making the connectionSocket
