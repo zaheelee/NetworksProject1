@@ -2,20 +2,16 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
-class ChatServer /*implements Runnable*/
+class ChatServer 
 {
-	/*
-	public void run()
-	{
-		
-	}
-	*/
-	
 	public static void main(String argv[]) throws Exception
 	{
 		//Put any shared variables you may need up here 
-		HashMap<String, ChatUser> allUsers = new HashMap<String, ChatUser>();
+		ConcurrentHashMap<String, ChatUser> allUsers = new ConcurrentHashMap<String, ChatUser>();
+		
+		ArrayList<ChatServerThread> allThreads = new ArrayList<ChatServerThread>();
 		
 		//create the welcome socket
 		//this is what new clients connect to before making the connectionSocket
@@ -42,7 +38,7 @@ class ChatServer /*implements Runnable*/
 			ChatUser user = new ChatUser(username, connectionSocket, inputStream, outputStream);
 			allUsers.put(user.getUsername(), user);
 			
-			//TODO handle thread things HERE
+			ChatServerThread t = new ChatServerThread(allUsers, user);
 			
 			//this allows for one client to connect to multiple conversations
 			//the first chunk of this while loop will have code to connect 2 users
@@ -50,7 +46,9 @@ class ChatServer /*implements Runnable*/
 			//the last chunk will have code to tear down connection (if needed)
 			while(true /* the client has not tried to disconnect */)
 			{
-				//TODO take in the username of the target from connectionSocket
+				//TODO tell the user which commands will do what
+				
+				//TODO ask for and take in the username of the target user from connectionSocket
 			
 				//TODO check if target is active and free, active and busy, or inactive
 					//TODO if target is active and busy, tell client
@@ -70,7 +68,7 @@ class ChatServer /*implements Runnable*/
 		
 	}
 	
-	public static String retrieveUsername(BufferedReader inputStream, DataOutputStream outputStream, HashMap<String, ChatUser> allUsers) throws IOException
+	public static String retrieveUsername(BufferedReader inputStream, DataOutputStream outputStream, ConcurrentHashMap<String, ChatUser> allUsers) throws IOException
 	{
 		outputStream.writeBytes("What is your username?");
 		String username = inputStream.readLine();
