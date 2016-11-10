@@ -11,6 +11,7 @@ class ChatClient
 		int portNum = 0;
 		String typedMessage = "";
 		String recievedMessage = "";
+		boolean isListener = false;
 		
 		//create input stream from the keyboard
 		BufferedReader inFromKeyboard = new BufferedReader(new InputStreamReader(System.in));
@@ -34,35 +35,52 @@ class ChatClient
 		
 		while(connectedToServer) //TODO while connection with server thread is still valid
 		{
-			System.out.println(inFromServer.readLine()); //instructions for the user to read
-			typedMessage = inFromKeyboard.readLine(); //user input
-			//TODO see if data is a quit command, set connectedToServer accordingly
-			
-			outToServer.writeBytes(typedMessage); //send user input to server
-			recievedMessage = inFromServer.readLine();
-			
-			System.out.println(recievedMessage);
-			
-			if(recievedMessage.equals("Connected."))
+			if(isListener)
 			{
-				
-				boolean myTurnToTalk = false;//set this based on response from server
-				
-				while(true) //TODO while connection with another user is valid
+				//provide an opportunity for quit commands
+			}
+			else
+			{
+				System.out.println(inFromServer.readLine()); //instructions for the user to read
+				typedMessage = inFromKeyboard.readLine(); //user input
+				outToServer.writeBytes(typedMessage); //send user input to server
+			
+				if(typedMessage.equals("Listener") || typedMessage.equals("listener"))
 				{
-					if(myTurnToTalk) //TODO it's your turn to talk
+					isListener = true;
+				}
+				else if(typedMessage.equals("quit"))
+				{
+					connectedToServer = false;
+				}
+				else
+				{
+					recievedMessage = inFromServer.readLine();
+			
+					System.out.println(recievedMessage);
+			
+					if(recievedMessage.equals("Connected."))
 					{
-						//TODO save data from keyboard input
+					
+						boolean myTurnToTalk = false;//set this based on response from server
+				
+						while(true) //TODO while connection with another user is valid
+						{
+							if(myTurnToTalk) //TODO it's your turn to talk
+							{
+								//TODO save data from keyboard input
 						
-						//TODO send data to server
-					}
-					else//TODO it is not your turn to talk
-					{
-						//TODO save data from server
+								//TODO send data to server
+							}
+							else//TODO it is not your turn to talk
+							{
+								//TODO save data from server
 						
-						//TODO display data from server
+								//TODO display data from server
+							}
+							myTurnToTalk = !myTurnToTalk;
+						}
 					}
-					myTurnToTalk = !myTurnToTalk;
 				}
 			}
 		}

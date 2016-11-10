@@ -15,10 +15,6 @@ class ChatServerThread extends Thread
 	
 	public void run()
 	{
-		//this allows for one client to connect to multiple conversations
-		//the first chunk of this while loop will have code to connect 2 users
-		//the middle chunk will have code to exchange messages 
-		//the last chunk will have code to tear down connection (if needed)
 		while(isUserConnected)
 		{
 			try {
@@ -26,6 +22,14 @@ class ChatServerThread extends Thread
 				{
 					//check the users connection variable? if another user connected to them then it should be set...
 					//maybe you don't need to do anything other than figure out if the user disconnects...
+					if(currentUser.getChatPartner() == null)//waiting on a connection
+					{
+						
+					}
+					else //chatting with someone
+					{
+						//TODO handle when the user says "quit"
+					}
 				}
 				else
 				{
@@ -35,7 +39,10 @@ class ChatServerThread extends Thread
 					if(targetUsername.equals("Listener") || targetUsername.equals("listener"))
 					{
 						currentUser.setListener(true);
-						//TODO wait for someone to start a chat with you
+					}
+					else if(targetUsername.equals("quit"))
+					{
+						isUserConnected = false;
 					}
 					else
 					{
@@ -47,6 +54,8 @@ class ChatServerThread extends Thread
 							while(currentUser.getChatPartner() == targetUser && targetUser.getChatPartner() == currentUser) // client and target are both active and connected to each other 
 							{
 								//TODO THIS IS ONE LIFECYCLE OF SENDING A SINGLE MESSAGE (alternates who sends each loop)
+								
+								//TODO handle if someone types in "quit"
 							}
 						}
 						else //connection with target is not made
@@ -56,14 +65,20 @@ class ChatServerThread extends Thread
 					}
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		
 		//TEAR DOWN CONNECTION WITH CLIENT:
-		//TODO tear down input and output streams (this user)
-		//TODO close connectionSocket
-		//TODO remove user from hashmap of all users
+		try {
+			currentUser.inputStream.close();
+			currentUser.outputStream.close();
+			currentUser.getConnectionSocket().close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		//remove user from hashmap of all users
+		allUsers.remove(currentUser.getUsername());
 	}
 }

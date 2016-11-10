@@ -52,7 +52,7 @@ class ChatServer
 		
 		if(allUsers.containsKey(username))
 		{
-			outputStream.writeBytes("This username is already in use");
+			outputStream.writeBytes("This username is already in use, please try another one");
 			return null;
 		}
 		else
