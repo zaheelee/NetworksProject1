@@ -6,9 +6,11 @@ class ChatUser
 {
 	private String username;
 	private Socket connectionSocket;
-	BufferedReader inputStream;
-	DataOutputStream outputStream;
+	public BufferedReader inputStream;
+	public DataOutputStream outputStream;
 	private ChatUser chatPartner;
+	private boolean isListener;
+	
 	
 	public ChatUser()
 	{
@@ -45,14 +47,29 @@ class ChatUser
 		connectionSocket = connection;
 	}
 	
+	public boolean isListener() {
+		return isListener;
+	}
+
+	public void setListener(boolean isListener) {
+		this.isListener = isListener;
+	}
+	
 	public ChatUser getChatPartner()
 	{
 		return chatPartner;
 	}
 	
+	/**
+	 * Sets the chat partner of the current user if the target partner is either chatting with no one, 
+	 * or chatting with the current user
+	 * @param partner
+	 * @return true if the value of the chatPartner is set to be the input partner. 
+	 * False if the partner was null or chatting with someone else
+	 */
 	public boolean setChatPartner(ChatUser partner)
 	{
-		if(partner.getChatPartner() == null || partner.getChatPartner() == this)
+		if(partner != null && (partner.getChatPartner() == null || partner.getChatPartner() == this))
 		{
 			partner.setChatPartner(this);
 			this.setChatPartner(partner);
@@ -62,6 +79,11 @@ class ChatUser
 		{
 			return false;
 		}
+	}
+	
+	public void removeChatPartner()
+	{
+		this.chatPartner = null;
 	}
 	
 	@Override

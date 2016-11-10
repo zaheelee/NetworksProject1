@@ -1,7 +1,6 @@
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 class ChatServer 
@@ -39,30 +38,8 @@ class ChatServer
 			allUsers.put(user.getUsername(), user);
 			
 			ChatServerThread t = new ChatServerThread(allUsers, user);
-			
-			//this allows for one client to connect to multiple conversations
-			//the first chunk of this while loop will have code to connect 2 users
-			//the middle chunk will have code to exchange messages 
-			//the last chunk will have code to tear down connection (if needed)
-			while(true /* the client has not tried to disconnect */)
-			{
-				//TODO tell the user which commands will do what
-				
-				//TODO ask for and take in the username of the target user from connectionSocket
-			
-				//TODO check if target is active and free, active and busy, or inactive
-					//TODO if target is active and busy, tell client
-					//TODO if target is inactive, tell client
-					//TODO if target is active and free:
-				while(true /* client and target are both active and connected to each other */) //TODO 
-				{
-					//THIS IS ONE LIFECYCLE OF SENDING A SINGLE MESSAGE (alternates who sends each loop)
-				}
-			}
-			
-			//TEAR DOWN CONNECTION WITH CLIENT:
-			//TODO tear down input and output streams (this user)
-			//TODO close connectionSocket
+			allThreads.add(t);
+			t.start();
 		}
 		//END OF LOOP, WAIT FOR ANOTHER CLIENT CONNECTION
 		

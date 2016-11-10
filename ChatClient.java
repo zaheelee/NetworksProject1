@@ -9,6 +9,8 @@ class ChatClient
 		boolean connectedToServer = true;
 		String hostname = "";
 		int portNum = 0;
+		String typedMessage = "";
+		String recievedMessage = "";
 		
 		//create input stream from the keyboard
 		BufferedReader inFromKeyboard = new BufferedReader(new InputStreamReader(System.in));
@@ -30,39 +32,40 @@ class ChatClient
 		//create input stream attached to socket
 		BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 		
-		while(connectedToServer) //TODO while connection with server is still valid
+		while(connectedToServer) //TODO while connection with server thread is still valid
 		{
-			//TODO save data taken from keyboard input
-			
+			System.out.println(inFromServer.readLine()); //instructions for the user to read
+			typedMessage = inFromKeyboard.readLine(); //user input
 			//TODO see if data is a quit command, set connectedToServer accordingly
 			
-			//TODO send data to server
+			outToServer.writeBytes(typedMessage); //send user input to server
+			recievedMessage = inFromServer.readLine();
 			
-			//TODO receive data from server
+			System.out.println(recievedMessage);
 			
-			//TODO process data taken from server
-				//TODO if a connection with another user is successful, 
-					//data will also contain whether you speak first
-			
-			boolean myTurnToTalk = false;//set this based on response from server
-			
-			while(true) //TODO while connection with another user is valid
+			if(recievedMessage.equals("Connected."))
 			{
-				if(myTurnToTalk) //TODO it's your turn to talk
+				
+				boolean myTurnToTalk = false;//set this based on response from server
+				
+				while(true) //TODO while connection with another user is valid
 				{
-					//TODO save data from keyboard input
-					
-					//TODO send data to server
+					if(myTurnToTalk) //TODO it's your turn to talk
+					{
+						//TODO save data from keyboard input
+						
+						//TODO send data to server
+					}
+					else//TODO it is not your turn to talk
+					{
+						//TODO save data from server
+						
+						//TODO display data from server
+					}
+					myTurnToTalk = !myTurnToTalk;
 				}
-				else//TODO it is not your turn to talk
-				{
-					//TODO save data from server
-					
-					//TODO display data from server
-				}
-				myTurnToTalk = !myTurnToTalk;
 			}
 		}
-		//TODO close client socket
+		clientSocket.close();
 	}
 }
